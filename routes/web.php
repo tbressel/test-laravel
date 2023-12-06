@@ -30,3 +30,4 @@ Route::post('/taskupdate/{id}', [TaskController::class, 'update'])->where('id','
 Route::get('/taskdelete/{id}', [TaskController::class, 'destroy'])->where('id','[0-9]+')->name('task.delete');
 
 Route::get('/taskdone/{id}', [TaskController::class, 'done'])->where('id','[0-9]+')->name('task.done');
+Route::get('/taskundone/{id}', [TaskController::class, 'undone'])->where('id','[0-9]+')->name('task.undone');

@@ -13,11 +13,16 @@ class TaskController extends Controller
     public function index()
     {
         $data = [
-            'tasks' => Task::all()
+            // 'tasks' => Task::all()
+            'tasks' => Task::where('task_stat', 0)->get()
         ];
         return view('tasklist', $data);
+
+
     }
 
+
+    
     /**
      * Show the form for creating a new resource.
      */
@@ -34,11 +39,11 @@ class TaskController extends Controller
         $request->validate([
             'taskname_field' => 'required|max:50',
         ]);
-        
+
         $task = new Task();
         $task->task_name = $request->input('taskname_field');
         $task->save();
-     return redirect()->route('task.list')->with('notif', 'La tâche a été créée');
+        return redirect()->route('task.list')->with('notif', 'La tâche a été créée');
     }
 
     /**
@@ -64,18 +69,20 @@ class TaskController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $request->validate([
-            'taskname_field' => 'required|max:50|min:5',
-        ],
-    [
-        'taskname_field.required' => 'Le champ ne doit pas être vide',
-        'taskname_field.max' => 'Il y a trop de caractères',
-        'taskname_field.min' => 'Il n\'y a pas assez de caractèes',
-    ]);
+        $request->validate(
+            [
+                'taskname_field' => 'required|max:50|min:5',
+            ],
+            [
+                'taskname_field.required' => 'Le champ ne doit pas être vide',
+                'taskname_field.max' => 'Il y a trop de caractères',
+                'taskname_field.min' => 'Il n\'y a pas assez de caractèes',
+            ]
+        );
 
         $task = Task::find($id);
         $task->task_name = $request->input('taskname_field');
-        $task->save(); 
+        $task->save();
         return redirect()->route('task.list')->with('notif', 'La tâche a été modifiée');
     }
 
@@ -89,13 +96,29 @@ class TaskController extends Controller
         return redirect()->route('task.list')->with('notif', 'La tâche a été supprimée');
     }
 
-public function done(string $id)
-{
-    $task = Task::find($id);
-    $task->update(['task_state' => 'done']);
-    return redirect('/tasklist/');
-}
 
-
-
+    /**
+     * Update task to done
+     *
+     * @param string $id
+     * @return void
+     */
+    public function done(string $id)
+    {
+        $task = Task::find($id);
+        $task->update(['task_stat' => 1]);
+        return redirect('/tasklist/');
+    }
+    /**
+     * Update task to undone
+     *
+     * @param string $id
+     * @return void
+     */
+    public function undone(string $id)
+    {
+        $task = Task::find($id);
+        $task->update(['task_stat' => 0]);
+        return redirect('/tasklist/');
+    }
 }
