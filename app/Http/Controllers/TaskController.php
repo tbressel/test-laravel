@@ -12,13 +12,10 @@ class TaskController extends Controller
      */
     public function index()
     {
-        $data = [
-            // 'tasks' => Task::all()
-            'tasks' => Task::where('task_stat', 0)->get()
+        $data = [   
+            'tasks' => Task::where('task_stat', 0)->orderBy('task_name', 'desc')->get()
         ];
         return view('tasklist', $data);
-
-
     }
 
 
